@@ -1,11 +1,10 @@
 import net from 'net';
+import initServer from './init/index.js';
 
 const PORT = 5555;
 
 const server = net.createServer((socket) => {
-  console.log(
-    `Client connected from: ${socket.remoteAddress}:${socket.remotePort}`
-  );
+  console.log(`Client connected from: ${socket.remoteAddress}:${socket.remotePort}`);
 
   socket.on('data', (data) => {
     console.log(data);
@@ -20,7 +19,14 @@ const server = net.createServer((socket) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`Echo server listening on port ${PORT}`);
-  console.log(server.address());
-});
+initServer()
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log(`Echo server listening on port ${PORT}`);
+      console.log(server.address());
+    });
+  })
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
