@@ -6,7 +6,7 @@ import { ErrorCodes } from '../../utils/error/errorCodes.js';
 import { handlerError } from '../../utils/error/errorHandler.js';
 import { createResponse } from '../../utils/response/create.Response.js';
 
-const joinGameHandler = (socket, userId, payload) => {
+const joinGameHandler = ({ socket, userId, payload }) => {
   try {
     const { gameId } = payload;
     const gameSession = getGameSession(gameId);
@@ -28,12 +28,11 @@ const joinGameHandler = (socket, userId, payload) => {
     const joinGameResponse = createResponse(
       HANDLER_IDS.JOIN_GAME,
       RESPONSE_SUCCESS_CODE,
-      {
-        gameId,
-        message: '게임에 참가했습니다.',
-      },
+      { gameId, message: '게임에 참가했습니다.' },
       user.id,
     );
+
+    socket.write(joinGameResponse);
   } catch (e) {
     handlerError(socket, e);
   }
